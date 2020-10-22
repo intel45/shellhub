@@ -64,6 +64,7 @@ func main() {
 	publicAPI.POST(routes.AuthUserURLV2, apicontext.Handler(routes.AuthUser))
 	publicAPI.GET(routes.AuthUserURLV2, apicontext.Handler(routes.AuthUserInfo))
 	internalAPI.GET(routes.AuthUserTokenURL, apicontext.Handler(routes.AuthGetToken))
+	publicAPI.GET(routes.AuthUserTokenURL, apicontext.Handler(routes.AuthSwapToken))
 
 	publicAPI.PUT(routes.UpdateUserURL, apicontext.Handler(routes.UpdateUser))
 	publicAPI.PUT(routes.UserSecurityURL, apicontext.Handler(routes.UpdateUserSecurity))
@@ -86,6 +87,14 @@ func main() {
 	publicAPI.GET(routes.PlaySessionURL, apicontext.Handler(routes.PlaySession))
 
 	publicAPI.GET(routes.GetStatsURL, apicontext.Handler(routes.GetStats))
+
+	publicAPI.GET(routes.ListNamespaceURL, apicontext.Handler(routes.GetNamespaceList))
+	publicAPI.GET(routes.GetNamespaceURL, apicontext.Handler(routes.GetNamespace))
+	publicAPI.POST(routes.CreateNamespaceURL, apicontext.Handler(routes.CreateNamespace))
+	publicAPI.DELETE(routes.DeleteNamespaceURL, apicontext.Handler(routes.DeleteNamespace))
+	publicAPI.PUT(routes.EditNamespaceURL, apicontext.Handler(routes.EditNamespace))
+	publicAPI.PATCH(routes.AddNamespaceUserURL, apicontext.Handler(routes.AddNamespaceUser))
+	publicAPI.PATCH(routes.RemoveNamespaceUserURL, apicontext.Handler(routes.RemoveNamespaceUser))
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

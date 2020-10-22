@@ -5,6 +5,7 @@ import (
 )
 
 type User struct {
+	ID            string `json:"id" bson:"_id"`
 	Name          string `json:"name"`
 	Email         string `json:"email" bson:",omitempty" validate:"email"`
 	Username      string `json:"username" bson:",omitempty"`
@@ -24,6 +25,7 @@ type UserAuthResponse struct {
 	Token  string `json:"token"`
 	User   string `json:"user"`
 	Name   string `json:"name"`
+	ID     string `json:"id"`
 	Tenant string `json:"tenant"`
 	Email  string `json:"email"`
 }
@@ -32,6 +34,7 @@ type UserAuthClaims struct {
 	Username string `json:"name"`
 	Admin    bool   `json:"admin"`
 	Tenant   string `json:"tenant"`
+	ID       string `json:"id"`
 
 	AuthClaims         `json:",squash"`
 	jwt.StandardClaims `json:",squash"`
