@@ -37,6 +37,7 @@ func AuthRequest(c apicontext.Context) error {
 		// Extract tenant and username from JWT
 		c.Response().Header().Set("X-Tenant-ID", claims.Tenant)
 		c.Response().Header().Set("X-Username", claims.Username)
+		c.Response().Header().Set("X-ID", claims.ID)
 
 		return nil
 	case "device":
@@ -108,6 +109,21 @@ func AuthUserInfo(c apicontext.Context) error {
 func AuthGetToken(c apicontext.Context) error {
 	svc := authsvc.NewService(c.Store(), nil, nil)
 	res, err := svc.AuthGetToken(c.Ctx(), c.Param("tenant"))
+	if err != nil {
+		return echo.ErrUnauthorized
+	}
+	return c.JSON(http.StatusOK, res)
+}
+
+func AuthSwapToken(c apicontext.Context) error {
+	svc := authsvc.NewService(c.Store(), nil, nil)
+
+	username := ""
+	if v := c.Username(); v != nil {
+		username = v.ID
+	}
+
+	res, err := svc.AuthSwapToken(c.Ctx(), username, c.Param("tenant"))
 	if err != nil {
 		return echo.ErrUnauthorized
 	}

@@ -22,6 +22,8 @@ type Service interface {
 	AuthDevice(ctx context.Context, req *models.DeviceAuthRequest) (*models.DeviceAuthResponse, error)
 	AuthUser(ctx context.Context, req models.UserAuthRequest) (*models.UserAuthResponse, error)
 	AuthGetToken(ctx context.Context, tenant string) (*models.UserAuthResponse, error)
+	AuthSwapToken(ctx context.Context, ID, tenant string) (*models.UserAuthResponse, error)
+
 	PublicKey() *rsa.PublicKey
 }
 
@@ -92,7 +94,7 @@ func (s *service) AuthDevice(ctx context.Context, req *models.DeviceAuthRequest)
 		return nil, err
 	}
 
-	user, err := s.store.GetUserByTenant(ctx, device.TenantID)
+	namespace, err := s.store.GetNamespace(ctx, device.TenantID)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +103,7 @@ func (s *service) AuthDevice(ctx context.Context, req *models.DeviceAuthRequest)
 		UID:       hex.EncodeToString(uid[:]),
 		Token:     tokenStr,
 		Name:      dev.Name,
-		Namespace: user.Username,
+		Namespace: namespace.Name,
 	}, nil
 }
 
@@ -113,13 +115,19 @@ func (s *service) AuthUser(ctx context.Context, req models.UserAuthRequest) (*mo
 			return nil, err
 		}
 	}
+	tenant := ""
+	namespace, err := s.store.GetSomeNamespace(ctx, user.ID)
+	if namespace != nil {
+		tenant = namespace.TenantID
+	}
 
 	password := sha256.Sum256([]byte(req.Password))
 	if user.Password == hex.EncodeToString(password[:]) {
 		token := jwt.NewWithClaims(jwt.SigningMethodRS256, models.UserAuthClaims{
 			Username: user.Username,
 			Admin:    true,
-			Tenant:   user.TenantID,
+			Tenant:   tenant,
+			ID:       user.ID,
 			AuthClaims: models.AuthClaims{
 				Claims: "user",
 			},
@@ -136,8 +144,9 @@ func (s *service) AuthUser(ctx context.Context, req models.UserAuthRequest) (*mo
 		return &models.UserAuthResponse{
 			Token:  tokenStr,
 			Name:   user.Name,
+			ID:     user.ID,
 			User:   user.Username,
-			Tenant: user.TenantID,
+			Tenant: tenant,
 			Email:  user.Email,
 		}, nil
 	}
@@ -145,8 +154,13 @@ func (s *service) AuthUser(ctx context.Context, req models.UserAuthRequest) (*mo
 	return nil, errors.New("unauthorized")
 }
 
-func (s *service) AuthGetToken(ctx context.Context, tenant string) (*models.UserAuthResponse, error) {
-	user, err := s.store.GetUserByTenant(ctx, tenant)
+func (s *service) AuthGetToken(ctx context.Context, ID string) (*models.UserAuthResponse, error) {
+	user, err := s.store.GetUserByID(ctx, ID)
+	if err != nil {
+		return nil, err
+	}
+
+	namespace, err := s.store.GetSomeNamespace(ctx, user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +168,7 @@ func (s *service) AuthGetToken(ctx context.Context, tenant string) (*models.User
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, models.UserAuthClaims{
 		Username: user.Username,
 		Admin:    true,
-		Tenant:   user.TenantID,
+		Tenant:   namespace.TenantID,
 		AuthClaims: models.AuthClaims{
 			Claims: "user",
 		},
@@ -171,10 +185,54 @@ func (s *service) AuthGetToken(ctx context.Context, tenant string) (*models.User
 	return &models.UserAuthResponse{
 		Token:  tokenStr,
 		Name:   user.Name,
+		ID:     user.ID,
 		User:   user.Username,
 		Tenant: user.TenantID,
 		Email:  user.Email,
 	}, nil
+}
+
+func (s *service) AuthSwapToken(ctx context.Context, username, tenant string) (*models.UserAuthResponse, error) {
+	namespace, err := s.store.GetNamespace(ctx, tenant)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.store.GetUserByUsername(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, i := range namespace.Members {
+		if user.ID == i {
+			token := jwt.NewWithClaims(jwt.SigningMethodRS256, models.UserAuthClaims{
+				Username: user.Username,
+				Admin:    true,
+				Tenant:   namespace.TenantID,
+				AuthClaims: models.AuthClaims{
+					Claims: "user",
+				},
+				StandardClaims: jwt.StandardClaims{
+					ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+				},
+			})
+
+			tokenStr, err := token.SignedString(s.privKey)
+			if err != nil {
+				return nil, err
+			}
+
+			return &models.UserAuthResponse{
+				Token:  tokenStr,
+				Name:   user.Name,
+				ID:     user.ID,
+				User:   user.Username,
+				Tenant: user.TenantID,
+				Email:  user.Email}, nil
+		}
+	}
+
+	return nil, nil
 }
 
 func (s *service) PublicKey() *rsa.PublicKey {
