@@ -7,6 +7,7 @@ import {
   putNamespace,
   addUserToNamespace,
   removeUserFromNamespace,
+  tenantSwitch,
 } from '@/store/api/namespaces';
 
 export default {
@@ -81,6 +82,14 @@ export default {
       const res = await removeUserFromNamespace(data);
       if (res.status === 200) {
         context.commit('removeMember', data.username);
+      }
+    },
+
+    switchNamespace: async (context, data) => {
+      const res = await tenantSwitch(data);
+      if (res.status === 200) {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('tenant', res.data.user);
       }
     },
   },
