@@ -80,7 +80,7 @@ func DeleteNamespace(c apicontext.Context) error {
 		}
 
 		if err == nsadm.ErrNamespaceNotFound {
-			return c.String(http.StatusNotFound, err.Error())
+			return c.NoContent(http.StatusNotFound)
 		}
 
 		return err

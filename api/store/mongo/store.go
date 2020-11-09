@@ -1174,15 +1174,15 @@ func (s *Store) EditNamespace(ctx context.Context, namespace, name string) (*mod
 	return s.GetNamespace(ctx, namespace)
 }
 
-func (s *Store) AddNamespaceUser(ctx context.Context, namespace, ID string) (*models.Namespace, error) {
-	if _, err := s.db.Collection("namespaces").UpdateOne(ctx, bson.M{"tenant_id": namespace}, bson.M{"$addToSet": bson.M{"members": ID}}); err != nil {
+func (s *Store) AddNamespaceUser(ctx context.Context, namespace, ID, username string) (*models.Namespace, error) {
+	if _, err := s.db.Collection("namespaces").UpdateOne(ctx, bson.M{"tenant_id": namespace}, bson.M{"$addToSet": bson.M{"members": ID, "member_names": username}}); err != nil {
 		return nil, err
 	}
 	return s.GetNamespace(ctx, namespace)
 }
 
-func (s *Store) RemoveNamespaceUser(ctx context.Context, namespace, ID string) (*models.Namespace, error) {
-	if _, err := s.db.Collection("namespaces").UpdateOne(ctx, bson.M{"tenant_id": namespace}, bson.M{"$pull": bson.M{"members": ID}}); err != nil {
+func (s *Store) RemoveNamespaceUser(ctx context.Context, namespace, ID, username string) (*models.Namespace, error) {
+	if _, err := s.db.Collection("namespaces").UpdateOne(ctx, bson.M{"tenant_id": namespace}, bson.M{"$pull": bson.M{"members": ID, "member_names": username}}); err != nil {
 		return nil, err
 	}
 	return s.GetNamespace(ctx, namespace)

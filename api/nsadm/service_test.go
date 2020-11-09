@@ -77,13 +77,11 @@ func TestEditNamespace(t *testing.T) {
 	newName := "newname"
 	namespace := &models.Namespace{Name: "oldname", Owner: "hash1", TenantID: "a736a52b-5777-4f92-b0b8-e359bf484713"}
 
+	mock.On("GetNamespace", ctx, namespace.TenantID).Return(namespace, nil).Once()
 	mock.On("GetUserByUsername", ctx, user.Username).Return(user, nil).Once()
-	mock.On("GetNamespace", ctx, namespace.TenantID).Return(namespace, nil).Twice()
-	mock.On("EditNamespace", ctx, namespace.TenantID, newName).Return(nil).Once()
-	err := s.EditNamespace(ctx, namespace.TenantID, newName, namespace.Owner)
+	mock.On("EditNamespace", ctx, namespace.TenantID, newName).Return(namespace, nil).Once()
+	returnedNamespace, err := s.EditNamespace(ctx, namespace.TenantID, newName, namespace.Owner)
 
-	assert.NoError(t, err)
-	returnedNamespace, err := s.GetNamespace(ctx, namespace.TenantID)
 	assert.NoError(t, err)
 	assert.Equal(t, newName, returnedNamespace.Name)
 	mock.AssertExpectations(t)
@@ -120,15 +118,11 @@ func TestAddNamespaceUser(t *testing.T) {
 	mock.On("GetNamespace", ctx, namespace.TenantID).Return(namespace, nil).Once()
 	mock.On("GetUserByUsername", ctx, user.Username).Return(user, nil).Once()
 	mock.On("GetUserByUsername", ctx, member.Username).Return(member, nil).Once()
-	mock.On("AddNamespaceUser", ctx, namespace.TenantID, member.ID).Return(nil).Once()
+	mock.On("AddNamespaceUser", ctx, namespace.TenantID, member.ID, member.Username).Return(namespace2, nil).Once()
 
-	err := s.AddNamespaceUser(ctx, namespace.TenantID, member.Username, user.Username)
+	returnedNamespace, err := s.AddNamespaceUser(ctx, namespace.TenantID, member.Username, user.Username)
 	assert.NoError(t, err)
 
-	mock.On("GetNamespace", ctx, namespace.TenantID).Return(namespace2, nil).Once()
-
-	returnedNamespace, err := s.GetNamespace(ctx, namespace.TenantID)
-	assert.NoError(t, err)
 	assert.Equal(t, namespace2, returnedNamespace)
 }
 
@@ -144,14 +138,10 @@ func TestRemoveNamespaceUser(t *testing.T) {
 	mock.On("GetNamespace", ctx, namespace.TenantID).Return(namespace, nil).Once()
 	mock.On("GetUserByUsername", ctx, user.Username).Return(user, nil).Once()
 	mock.On("GetUserByUsername", ctx, member.Username).Return(member, nil).Once()
-	mock.On("RemoveNamespaceUser", ctx, namespace.TenantID, member.ID).Return(nil).Once()
+	mock.On("RemoveNamespaceUser", ctx, namespace.TenantID, member.ID, member.Username).Return(namespace2, nil).Once()
 
-	err := s.RemoveNamespaceUser(ctx, namespace.TenantID, member.Username, user.Username)
+	returnedNamespace, err := s.RemoveNamespaceUser(ctx, namespace.TenantID, member.Username, user.Username)
 	assert.NoError(t, err)
 
-	mock.On("GetNamespace", ctx, namespace.TenantID).Return(namespace2, nil).Once()
-
-	returnedNamespace, err := s.GetNamespace(ctx, namespace.TenantID)
-	assert.NoError(t, err)
 	assert.Equal(t, namespace2, returnedNamespace)
 }
