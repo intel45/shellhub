@@ -64,6 +64,8 @@ func (s *service) CreateNamespace(ctx context.Context, namespace *models.Namespa
 	}
 	namespace.Owner = user.ID
 	namespace.Members = []string{user.ID}
+	settings := &models.NamespaceSettings{SessionRecord: true}
+	namespace.Settings = settings
 	if namespace.TenantID == "" {
 		namespace.TenantID = uuid.Must(uuid.NewV4(), nil).String()
 	}
