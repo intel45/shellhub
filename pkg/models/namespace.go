@@ -5,7 +5,7 @@ type Namespace struct {
 	Owner       string             `json:"owner"`
 	TenantID    string             `json:"tenant_id" bson:"tenant_id,omitempty"`
 	Members     []string           `json:"members" bson:"members"`
-	MemberNames []string           `json:"member_names" bson:"member_names",omitempty`
+	MemberNames []string           `json:"member_names,omitempty" bson:"member_names",omitempty`
 	Settings    *NamespaceSettings `json:"settings"`
 }
 
