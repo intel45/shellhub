@@ -893,13 +893,13 @@ func (s *Store) UpdateUser(ctx context.Context, username, email, currentPassword
 }
 
 func (s *Store) UpdateDataUserSecurity(ctx context.Context, sessionRecord bool, tenant string) error {
-	_, err := s.GetUserByTenant(ctx, tenant)
+	ns, err := s.GetNamespace(ctx, tenant)
 
-	if err != nil {
+	if err != nil || ns == nil {
 		return err
 	}
 
-	if _, err := s.db.Collection("namespaces").UpdateOne(ctx, bson.M{"tenant_id": tenant}, bson.M{"$set": bson.M{"settings.session_record": sessionRecord}}); err != nil {
+	if _, err := s.db.Collection("namespaces").UpdateOne(ctx, bson.M{"tenant_id": ns.TenantID}, bson.M{"$set": bson.M{"settings.session_record": sessionRecord}}); err != nil {
 		return err
 	}
 
@@ -907,9 +907,9 @@ func (s *Store) UpdateDataUserSecurity(ctx context.Context, sessionRecord bool, 
 }
 
 func (s *Store) GetDataUserSecurity(ctx context.Context, tenant string) (bool, error) {
-	_, err := s.GetNamespace(ctx, tenant)
+	ns, err := s.GetNamespace(ctx, tenant)
 
-	if err != nil {
+	if err != nil && ns == nil {
 		return false, err
 	}
 
