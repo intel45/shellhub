@@ -58,7 +58,7 @@ func UpdateUser(c apicontext.Context) error {
 
 func UpdateUserSecurity(c apicontext.Context) error {
 	var req struct {
-		SessionRecord bool `json:"sessionRecord"`
+		SessionRecord bool `json:"session_record"`
 	}
 	if err := c.Bind(&req); err != nil {
 		return err

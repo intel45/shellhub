@@ -907,7 +907,7 @@ func (s *Store) UpdateDataUserSecurity(ctx context.Context, sessionRecord bool, 
 }
 
 func (s *Store) GetDataUserSecurity(ctx context.Context, tenant string) (bool, error) {
-	_, err := s.GetUserByTenant(ctx, tenant)
+	_, err := s.GetNamespace(ctx, tenant)
 
 	if err != nil {
 		return false, err
@@ -917,12 +917,9 @@ func (s *Store) GetDataUserSecurity(ctx context.Context, tenant string) (bool, e
 		Settings *models.NamespaceSettings `json:"settings" bson:"settings"`
 	}
 
-	//var status *models.NamespaceSettings
-
 	if err := s.db.Collection("namespaces").FindOne(ctx, bson.M{"tenant_id": tenant}).Decode(&settings); err != nil {
 		return false, err
 	}
-
 	return settings.Settings.SessionRecord, nil
 }
 
