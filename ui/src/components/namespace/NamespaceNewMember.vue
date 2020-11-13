@@ -105,6 +105,7 @@ export default {
           username: this.username,
           tenant_id: this.tenant,
         });
+        await this.$store.dispatch('namespaces/get', this.tenant);
         this.dialog = false;
         this.username = '';
         this.$store.dispatch('snackbar/showSnackbarSuccessAction', this.$success.namespaceNewMember);

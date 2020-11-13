@@ -62,8 +62,7 @@ export default {
     },
 
     put: async (context, data) => {
-      const res = await putNamespace(data);
-      context.commit('setNamespace', res);
+      await putNamespace(data);
     },
 
     remove: async (context, id) => {
@@ -72,10 +71,7 @@ export default {
     },
 
     addUser: async (context, data) => {
-      const res = await addUserToNamespace(data);
-      if (res.status === 200) {
-        context.commit('setNamespace', res);
-      }
+      await addUserToNamespace(data);
     },
 
     removeUser: async (context, data) => {

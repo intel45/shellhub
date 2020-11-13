@@ -218,6 +218,7 @@ export default {
     async editNamespace() {
       try {
         await this.$store.dispatch('namespaces/put', { id: this.tenant, name: this.name });
+        await this.$store.dispatch('namespaces/get', this.tenant);
         this.$store.dispatch('snackbar/showSnackbarSuccessAction', this.$success.namespaceEdit);
       } catch {
         this.$store.dispatch('snackbar/showSnackbarErrorAction', this.$errors.namespaceEdit);
