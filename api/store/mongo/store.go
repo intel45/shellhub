@@ -1087,6 +1087,16 @@ func (s *Store) GetNamespace(ctx context.Context, namespace string) (*models.Nam
 	return ns, nil
 }
 
+func (s *Store) GetNamespaceByName(ctx context.Context, namespace string) (*models.Namespace, error) {
+	ns := new(models.Namespace)
+
+	if err := s.db.Collection("namespaces").FindOne(ctx, bson.M{"name": namespace}).Decode(&ns); err != nil {
+		return nil, err
+	}
+
+	return ns, nil
+}
+
 func (s *Store) ListNamespaces(ctx context.Context, pagination paginator.Query, filters []models.Filter, export bool) ([]models.Namespace, int, error) {
 	queryMatch, err := buildFilterQuery(filters)
 	query := []bson.M{
