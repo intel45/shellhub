@@ -67,4 +67,10 @@ describe('Namespace', () => {
       expect(item.tenant_id === namespace.tenant_id).toBeFalsy();
     });
   });
+  it('Clears the namespace variables from store', () => {
+    store.commit('namespaces/clearNamespaceList');
+    store.commit('namespaces/clearObjectNamespace');
+    expect(store.getters['namespaces/list']).toEqual([]);
+    expect(store.getters['namespaces/get']).toEqual({});
+  });
 });
