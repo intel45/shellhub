@@ -44,6 +44,15 @@ export default {
         (m) => m === usr,
       ), 1);
     },
+
+    clearNamespaceList: (state) => {
+      Vue.set(state, 'namespaces', []);
+      Vue.set(state, 'numberNamespaces', 0);
+    },
+
+    clearObjectNamespace: (state) => {
+      Vue.set(state, 'namespace', {});
+    },
   },
 
   actions: {
@@ -68,6 +77,8 @@ export default {
     remove: async (context, id) => {
       await removeNamespace(id);
       context.commit('removeNamespace', id);
+      context.commit('clearObjectNamespace');
+      context.commit('clearNamespaceList');
     },
 
     addUser: async (context, data) => {
