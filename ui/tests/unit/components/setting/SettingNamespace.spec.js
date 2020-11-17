@@ -44,6 +44,11 @@ describe('SettingNamespace', () => {
   });
 
   beforeEach(() => {
+    const lcstore = {
+      tenant: namespace.tenant_id,
+    };
+    jest.spyOn(Storage.prototype, 'getItem').mockReturnValue('a736a52b-5777-4f92-b0b8-e359bf484715');
+
     wrapper = shallowMount(SettingNamespace, {
       store,
       localVue,
