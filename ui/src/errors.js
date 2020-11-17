@@ -29,6 +29,7 @@ export default {
       namespaceSwitch: 'switching namespace',
       namespaceEdit: 'editing namespace',
       namespaceRemoveUser: 'removing user',
+      namespaceLoad: 'loading namespace',
     };
 
     Vue.errors = errors;
