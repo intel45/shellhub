@@ -31,17 +31,26 @@ func (_m *Store) AddDevice(ctx context.Context, d models.Device, hostname string
 }
 
 // AddNamespaceUser provides a mock function with given fields: ctx, namespace, ID
-func (_m *Store) AddNamespaceUser(ctx context.Context, namespace string, ID string) error {
+func (_m *Store) AddNamespaceUser(ctx context.Context, namespace string, ID string) (*models.Namespace, error) {
 	ret := _m.Called(ctx, namespace, ID)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) error); ok {
+	var r0 *models.Namespace
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) *models.Namespace); ok {
 		r0 = rf(ctx, namespace, ID)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Namespace)
+		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(ctx, namespace, ID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // CreateFirewallRule provides a mock function with given fields: ctx, rule
@@ -175,17 +184,26 @@ func (_m *Store) DeleteNamespace(ctx context.Context, namespace string) error {
 }
 
 // EditNamespace provides a mock function with given fields: ctx, namespace, name
-func (_m *Store) EditNamespace(ctx context.Context, namespace string, name string) error {
+func (_m *Store) EditNamespace(ctx context.Context, namespace string, name string) (*models.Namespace, error) {
 	ret := _m.Called(ctx, namespace, name)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) error); ok {
+	var r0 *models.Namespace
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) *models.Namespace); ok {
 		r0 = rf(ctx, namespace, name)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Namespace)
+		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(ctx, namespace, name)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // GetDataUserSecurity provides a mock function with given fields: ctx, tenant
@@ -347,6 +365,29 @@ func (_m *Store) GetNamespace(ctx context.Context, namespace string) (*models.Na
 	return r0, r1
 }
 
+// GetNamespaceByName provides a mock function with given fields: ctx, namespace
+func (_m *Store) GetNamespaceByName(ctx context.Context, namespace string) (*models.Namespace, error) {
+	ret := _m.Called(ctx, namespace)
+
+	var r0 *models.Namespace
+	if rf, ok := ret.Get(0).(func(context.Context, string) *models.Namespace); ok {
+		r0 = rf(ctx, namespace)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Namespace)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, namespace)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetRecord provides a mock function with given fields: ctx, uid
 func (_m *Store) GetRecord(ctx context.Context, uid models.UID) ([]models.RecordedSession, int, error) {
 	ret := _m.Called(ctx, uid)
@@ -400,6 +441,29 @@ func (_m *Store) GetSession(ctx context.Context, uid models.UID) (*models.Sessio
 	return r0, r1
 }
 
+// GetSomeNamespace provides a mock function with given fields: ctx, ID
+func (_m *Store) GetSomeNamespace(ctx context.Context, ID string) (*models.Namespace, error) {
+	ret := _m.Called(ctx, ID)
+
+	var r0 *models.Namespace
+	if rf, ok := ret.Get(0).(func(context.Context, string) *models.Namespace); ok {
+		r0 = rf(ctx, ID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Namespace)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, ID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetStats provides a mock function with given fields: ctx
 func (_m *Store) GetStats(ctx context.Context) (*models.Stats, error) {
 	ret := _m.Called(ctx)
@@ -439,6 +503,29 @@ func (_m *Store) GetUserByEmail(ctx context.Context, email string) (*models.User
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(ctx, email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetUserByID provides a mock function with given fields: ctx, ID
+func (_m *Store) GetUserByID(ctx context.Context, ID string) (*models.User, error) {
+	ret := _m.Called(ctx, ID)
+
+	var r0 *models.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) *models.User); ok {
+		r0 = rf(ctx, ID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, ID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -566,13 +653,13 @@ func (_m *Store) ListFirewallRules(ctx context.Context, pagination paginator.Que
 	return r0, r1, r2
 }
 
-// ListNamespaces provides a mock function with given fields: ctx, pagination
-func (_m *Store) ListNamespaces(ctx context.Context, pagination paginator.Query) ([]models.Namespace, int, error) {
-	ret := _m.Called(ctx, pagination)
+// ListNamespaces provides a mock function with given fields: ctx, pagination, filters, export
+func (_m *Store) ListNamespaces(ctx context.Context, pagination paginator.Query, filters []models.Filter, export bool) ([]models.Namespace, int, error) {
+	ret := _m.Called(ctx, pagination, filters, export)
 
 	var r0 []models.Namespace
-	if rf, ok := ret.Get(0).(func(context.Context, paginator.Query) []models.Namespace); ok {
-		r0 = rf(ctx, pagination)
+	if rf, ok := ret.Get(0).(func(context.Context, paginator.Query, []models.Filter, bool) []models.Namespace); ok {
+		r0 = rf(ctx, pagination, filters, export)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]models.Namespace)
@@ -580,15 +667,15 @@ func (_m *Store) ListNamespaces(ctx context.Context, pagination paginator.Query)
 	}
 
 	var r1 int
-	if rf, ok := ret.Get(1).(func(context.Context, paginator.Query) int); ok {
-		r1 = rf(ctx, pagination)
+	if rf, ok := ret.Get(1).(func(context.Context, paginator.Query, []models.Filter, bool) int); ok {
+		r1 = rf(ctx, pagination, filters, export)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
 	var r2 error
-	if rf, ok := ret.Get(2).(func(context.Context, paginator.Query) error); ok {
-		r2 = rf(ctx, pagination)
+	if rf, ok := ret.Get(2).(func(context.Context, paginator.Query, []models.Filter, bool) error); ok {
+		r2 = rf(ctx, pagination, filters, export)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -626,13 +713,13 @@ func (_m *Store) ListSessions(ctx context.Context, pagination paginator.Query) (
 	return r0, r1, r2
 }
 
-// ListUsers provides a mock function with given fields: ctx, pagination, filters, countSessionsDevices
-func (_m *Store) ListUsers(ctx context.Context, pagination paginator.Query, filters []models.Filter, countSessionsDevices bool) ([]models.User, int, error) {
-	ret := _m.Called(ctx, pagination, filters, countSessionsDevices)
+// ListUsers provides a mock function with given fields: ctx, pagination, filters
+func (_m *Store) ListUsers(ctx context.Context, pagination paginator.Query, filters []models.Filter) ([]models.User, int, error) {
+	ret := _m.Called(ctx, pagination, filters)
 
 	var r0 []models.User
-	if rf, ok := ret.Get(0).(func(context.Context, paginator.Query, []models.Filter, bool) []models.User); ok {
-		r0 = rf(ctx, pagination, filters, countSessionsDevices)
+	if rf, ok := ret.Get(0).(func(context.Context, paginator.Query, []models.Filter) []models.User); ok {
+		r0 = rf(ctx, pagination, filters)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]models.User)
@@ -640,15 +727,15 @@ func (_m *Store) ListUsers(ctx context.Context, pagination paginator.Query, filt
 	}
 
 	var r1 int
-	if rf, ok := ret.Get(1).(func(context.Context, paginator.Query, []models.Filter, bool) int); ok {
-		r1 = rf(ctx, pagination, filters, countSessionsDevices)
+	if rf, ok := ret.Get(1).(func(context.Context, paginator.Query, []models.Filter) int); ok {
+		r1 = rf(ctx, pagination, filters)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
 	var r2 error
-	if rf, ok := ret.Get(2).(func(context.Context, paginator.Query, []models.Filter, bool) error); ok {
-		r2 = rf(ctx, pagination, filters, countSessionsDevices)
+	if rf, ok := ret.Get(2).(func(context.Context, paginator.Query, []models.Filter) error); ok {
+		r2 = rf(ctx, pagination, filters)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -717,17 +804,26 @@ func (_m *Store) RecordSession(ctx context.Context, uid models.UID, record strin
 }
 
 // RemoveNamespaceUser provides a mock function with given fields: ctx, namespace, ID
-func (_m *Store) RemoveNamespaceUser(ctx context.Context, namespace string, ID string) error {
+func (_m *Store) RemoveNamespaceUser(ctx context.Context, namespace string, ID string) (*models.Namespace, error) {
 	ret := _m.Called(ctx, namespace, ID)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) error); ok {
+	var r0 *models.Namespace
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) *models.Namespace); ok {
 		r0 = rf(ctx, namespace, ID)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Namespace)
+		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(ctx, namespace, ID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // RenameDevice provides a mock function with given fields: ctx, uid, name
@@ -851,13 +947,13 @@ func (_m *Store) UpdateUID(ctx context.Context, oldUID models.UID, newUID models
 	return r0
 }
 
-// UpdateUser provides a mock function with given fields: ctx, username, email, currentPassword, newPassword, tenant
-func (_m *Store) UpdateUser(ctx context.Context, username string, email string, currentPassword string, newPassword string, tenant string) error {
-	ret := _m.Called(ctx, username, email, currentPassword, newPassword, tenant)
+// UpdateUser provides a mock function with given fields: ctx, username, email, currentPassword, newPassword, ID
+func (_m *Store) UpdateUser(ctx context.Context, username string, email string, currentPassword string, newPassword string, ID string) error {
+	ret := _m.Called(ctx, username, email, currentPassword, newPassword, ID)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, string, string, string, string, string) error); ok {
-		r0 = rf(ctx, username, email, currentPassword, newPassword, tenant)
+		r0 = rf(ctx, username, email, currentPassword, newPassword, ID)
 	} else {
 		r0 = ret.Error(0)
 	}
