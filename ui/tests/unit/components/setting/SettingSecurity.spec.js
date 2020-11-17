@@ -43,7 +43,7 @@ describe('SettingSecurity', () => {
   });
   it('Receives props data', () => {
     expect(wrapper.vm.show).toBe(true);
-  })
+  });
   it('Process data in the computed', () => {
     expect(wrapper.vm.sessionRecord).toEqual(sessionRecord);
   });
