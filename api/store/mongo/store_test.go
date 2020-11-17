@@ -1025,7 +1025,7 @@ func TestListUsers(t *testing.T) {
 	namespace := models.Namespace{Name: "name", Owner: "owner", TenantID: "tenant"}
 	db.Client().Database("test").Collection("users").InsertOne(ctx, user)
 	db.Client().Database("test").Collection("namespaces").InsertOne(ctx, namespace)
-	users, count, err := mongostore.ListUsers(ctx, paginator.Query{-1, -1}, nil, false)
+	users, count, err := mongostore.ListUsers(ctx, paginator.Query{-1, -1}, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, count)
 	assert.NotEmpty(t, users)
@@ -1186,7 +1186,7 @@ func testListNamespaces(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	_, count, err := mongostore.ListNamespaces(ctx, paginator.Query{-1, -1})
+	_, count, err := mongostore.ListNamespaces(ctx, paginator.Query{-1, -1}, nil, false)
 	assert.Equal(t, 1, count)
 	assert.NoError(t, err)
 }
@@ -1216,7 +1216,7 @@ func testAddNamespaceUser(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	u, err := mongostore.GetUserByUsername(ctx, "user")
-	err = mongostore.AddNamespaceUser(ctx, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", u.ID)
+	_, err = mongostore.AddNamespaceUser(ctx, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", u.ID)
 	assert.NoError(t, err)
 }
 func testRemoveNamespaceUser(t *testing.T) {
@@ -1245,9 +1245,9 @@ func testRemoveNamespaceUser(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	u, err := mongostore.GetUserByUsername(ctx, "user")
-	err = mongostore.AddNamespaceUser(ctx, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", u.ID)
+	_, err = mongostore.AddNamespaceUser(ctx, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", u.ID)
 	assert.NoError(t, err)
-	err = mongostore.AddNamespaceUser(ctx, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", u.ID)
+	_, err = mongostore.AddNamespaceUser(ctx, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", u.ID)
 	assert.NoError(t, err)
 }
 
