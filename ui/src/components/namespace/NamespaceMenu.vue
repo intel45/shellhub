@@ -35,7 +35,7 @@
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list flat>
+        <v-list>
           <v-subheader>Namespaces</v-subheader>
           <v-list-item-group>
             <v-virtual-scroll
@@ -63,8 +63,20 @@
           <v-divider />
           <v-list-item-group
             v-model="model"
+            two-line
           >
-            <NamespaceAdd />
+            <v-list-item
+              @click="dialog=!dialog"
+            >
+              <v-list-item-icon>
+                <v-icon>mdi-plus-box</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Create Namespace
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-divider />
             <v-list-item
               to="/settings/namespace-manager"
@@ -81,6 +93,9 @@
           </v-list-item-group>
         </v-list>
       </v-card>
+      <NamespaceAdd
+        :show.sync="dialog"
+      />
     </v-menu>
   </fragment>
 </template>
@@ -97,7 +112,8 @@ export default {
 
   data() {
     return {
-      model: 1,
+      model: true,
+      dialog: false,
     };
   },
 
@@ -124,6 +140,14 @@ export default {
 
     show() {
       return this.$env.isHosted;
+    },
+  },
+
+  watch: {
+    dialog(value) {
+      if (!value) {
+        this.model = false;
+      }
     },
   },
 

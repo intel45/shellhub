@@ -1,20 +1,8 @@
 <template>
   <fragment>
-    <v-list-item
-      @click="dialog= !dialog"
-    >
-      <v-list-item-icon>
-        <v-icon>mdi-plus-box</v-icon>
-      </v-list-item-icon>
-      <v-list-item-content>
-        <v-list-item-title>
-          Create Namespace
-        </v-list-item-title>
-      </v-list-item-content>
-    </v-list-item>
     <v-list-item-title>
       <v-dialog
-        v-model="dialog"
+        v-model="showAddNamespace"
         max-width="450"
         @click:outside="cancel"
       >
@@ -78,6 +66,13 @@ export default {
     ValidationObserver,
   },
 
+  props: {
+    show: {
+      type: Boolean,
+      required: true,
+    },
+  },
+
   data() {
     return {
       dialog: false,
@@ -85,11 +80,24 @@ export default {
     };
   },
 
+  computed: {
+    showAddNamespace: {
+      get() {
+        return this.show;
+      },
+
+      set(value) {
+        this.$emit('show', value);
+      },
+    },
+  },
+
   methods: {
     cancel() {
       this.dialog = false;
       this.$refs.obs.reset();
       this.namespace = '';
+      this.$emit('update:show', false);
     },
 
     async addNamespace() {
@@ -100,6 +108,7 @@ export default {
         await this.$store.dispatch('namespaces/fetch');
         this.dialog = false;
         this.namespace = '';
+        this.$emit('update:show', false);
         this.$store.dispatch('snackbar/showSnackbarSuccessAction', this.$success.namespaceCreating);
       } catch {
         this.$store.dispatch('snackbar/showSnackbarErrorAction', this.$errors.namespaceCreating);
