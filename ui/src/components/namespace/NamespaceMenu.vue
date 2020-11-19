@@ -159,7 +159,6 @@ export default {
     async getNamespaces() {
       try {
         // load namespaces
-        await this.$store.dispatch('namespaces/fetch');
         await this.$store.dispatch('namespaces/get', this.tenant);
       } catch {
         this.$store.dispatch('snackbar/showSnackbarErrorLoading', this.$errors.namespaceList);
