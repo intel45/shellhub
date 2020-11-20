@@ -101,6 +101,8 @@ func (s *Store) ListDevices(ctx context.Context, pagination paginator.Query, fil
 				"tenant_id": tenant.ID,
 			},
 		})
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, 0, nil
 	}
 
 	queryCount := append(query, bson.M{"$count": "count"})
@@ -170,6 +172,8 @@ func (s *Store) GetDevice(ctx context.Context, uid models.UID) (*models.Device, 
 				"tenant_id": tenant.ID,
 			},
 		})
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, nil
 	}
 
 	device := new(models.Device)
@@ -322,6 +326,8 @@ func (s *Store) ListSessions(ctx context.Context, pagination paginator.Query) ([
 				"tenant_id": tenant.ID,
 			},
 		})
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, 0, nil
 	}
 
 	queryCount := append(query, bson.M{"$count": "count"})
@@ -382,8 +388,9 @@ func (s *Store) GetSession(ctx context.Context, uid models.UID) (*models.Session
 				"tenant_id": tenant.ID,
 			},
 		})
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, nil
 	}
-
 	session := new(models.Session)
 
 	cursor, err := s.db.Collection("sessions").Aggregate(ctx, query)
@@ -451,6 +458,8 @@ func (s *Store) GetStats(ctx context.Context) (*models.Stats, error) {
 				"tenant_id": tenant.ID,
 			},
 		}}, query...)
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, nil
 	}
 
 	query = append([]bson.M{{
@@ -475,7 +484,10 @@ func (s *Store) GetStats(ctx context.Context) (*models.Stats, error) {
 				"tenant_id": tenant.ID,
 			},
 		}}, query...)
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, nil
 	}
+
 	query = append([]bson.M{{
 		"$match": bson.M{
 			"status": "accepted",
@@ -498,6 +510,8 @@ func (s *Store) GetStats(ctx context.Context) (*models.Stats, error) {
 				"tenant_id": tenant.ID,
 			},
 		}}, query...)
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, nil
 	}
 
 	query = append([]bson.M{{
@@ -522,6 +536,8 @@ func (s *Store) GetStats(ctx context.Context) (*models.Stats, error) {
 				"tenant_id": tenant.ID,
 			},
 		}}, query...)
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, nil
 	}
 
 	query = append([]bson.M{{
@@ -563,6 +579,8 @@ func (s *Store) GetStats(ctx context.Context) (*models.Stats, error) {
 				"tenant_id": tenant.ID,
 			},
 		})
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, nil
 	}
 
 	query = append(query, bson.M{
@@ -747,6 +765,8 @@ func (s *Store) ListFirewallRules(ctx context.Context, pagination paginator.Quer
 				"tenant_id": tenant.ID,
 			},
 		})
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, 0, nil
 	}
 
 	queryCount := append(query, bson.M{"$count": "count"})
@@ -823,6 +843,8 @@ func (s *Store) GetRecord(ctx context.Context, uid models.UID) ([]models.Recorde
 				"tenant_id": tenant.ID,
 			},
 		})
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, 0, nil
 	}
 	cursor, err := s.db.Collection("recorded_sessions").Aggregate(ctx, query)
 	if err != nil {
@@ -1017,6 +1039,8 @@ func (s *Store) ListUsers(ctx context.Context, pagination paginator.Query, filte
 				"tenant_id": tenant.ID,
 			},
 		})
+	} else if id := apicontext.IDFromContext(ctx); id != nil {
+		return nil, 0, nil
 	}
 
 	queryCount := append(query, bson.M{"$count": "count"})
