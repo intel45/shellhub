@@ -66,6 +66,7 @@
             two-line
           >
             <v-list-item
+              v-show="show"
               @click="dialog=!dialog"
             >
               <v-list-item-icon>
