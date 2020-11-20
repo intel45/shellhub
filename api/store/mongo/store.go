@@ -102,7 +102,7 @@ func (s *Store) ListDevices(ctx context.Context, pagination paginator.Query, fil
 			},
 		})
 	} else if id := apicontext.IDFromContext(ctx); id != nil {
-		return nil, 0, nil
+		return make([]models.Device, 0), 0, nil
 	}
 
 	queryCount := append(query, bson.M{"$count": "count"})
@@ -327,7 +327,7 @@ func (s *Store) ListSessions(ctx context.Context, pagination paginator.Query) ([
 			},
 		})
 	} else if id := apicontext.IDFromContext(ctx); id != nil {
-		return nil, 0, nil
+		return make([]models.Session, 0), 0, nil
 	}
 
 	queryCount := append(query, bson.M{"$count": "count"})
@@ -766,7 +766,7 @@ func (s *Store) ListFirewallRules(ctx context.Context, pagination paginator.Quer
 			},
 		})
 	} else if id := apicontext.IDFromContext(ctx); id != nil {
-		return nil, 0, nil
+		return make([]models.FirewallRule, 0), 0, nil
 	}
 
 	queryCount := append(query, bson.M{"$count": "count"})
@@ -844,7 +844,7 @@ func (s *Store) GetRecord(ctx context.Context, uid models.UID) ([]models.Recorde
 			},
 		})
 	} else if id := apicontext.IDFromContext(ctx); id != nil {
-		return nil, 0, nil
+		return sessionRecord, 0, nil
 	}
 	cursor, err := s.db.Collection("recorded_sessions").Aggregate(ctx, query)
 	if err != nil {
@@ -1040,7 +1040,7 @@ func (s *Store) ListUsers(ctx context.Context, pagination paginator.Query, filte
 			},
 		})
 	} else if id := apicontext.IDFromContext(ctx); id != nil {
-		return nil, 0, nil
+		return make([]models.User, 0), 0, nil
 	}
 
 	queryCount := append(query, bson.M{"$count": "count"})
